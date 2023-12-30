@@ -62,7 +62,7 @@ class Fetcher {
     for (Element source : sources) {
       String url = source.attr("src").replaceAll("180x180", "original");
       String title = source.attr("title");
-      urls.add(new Pair(url, title));
+      urls.add(new Pair<String, String>(url, title));
     }
     return urls;
   }
