@@ -1,4 +1,4 @@
-# danbooru-viewer
+# `danbooru-viewer`
 A really cool Danbooru viewer written in Java!
 ## Dependencies
 `JSoup`
