@@ -1,0 +1,3 @@
+# Danbooru Viewer
+## Dependencies
+`JSoup`
