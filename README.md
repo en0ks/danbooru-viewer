@@ -1,8 +1,8 @@
 # danbooru-viewer
 A really cool Danbooru viewer written in Java!
-## Dependencies:
+## Dependencies
 `JSoup`
-## Tested on:
+## Version
 ```
 $ java --version
 openjdk 17.0.8.1 2023-08-24
