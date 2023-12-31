@@ -1,5 +1,7 @@
 class Constants {
   public final static String INDEX_PAGE = "https://danbooru.donmai.us/posts?page=";
+  public final static String FILE_PAGE = "https://danbooru.donmai.us/posts/";
+  public final static String DOWNLOAD_ROOT_DIR = "../downloads/";
 
   public static final String ANSI_RESET = "\u001B[0m";
   public static final String ANSI_BLACK = "\u001B[30m";

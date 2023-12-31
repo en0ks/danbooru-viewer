@@ -5,75 +5,79 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 
 class Fetcher {
-  public static ArrayList<Picture> fetchSite(String link) throws IOException {
+  public static String fetchSite(String link) throws IOException {
+    URLConnection urlc = (new URL(link)).openConnection();
+    InputStream in = urlc.getInputStream();
+    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    StringBuilder content = new StringBuilder();
+    br.lines().forEach(line -> content.append(line));
+    return content.toString();
+  }
+
+  public static ArrayList<Picture> fetchPictureListFromSite(String link) throws IOException {
     try {
-      URLConnection urlc = (new URL(link)).openConnection();
-      InputStream in = urlc.getInputStream();
-      BufferedReader br = new BufferedReader(new InputStreamReader(in));
-      StringBuilder content = new StringBuilder();
-
-      br.lines().forEach(line -> content.append(line));
-
-      Document doc = Jsoup.parse(content.toString());
-
-      ArrayList<Element> pictures = getPictures(getArticles(doc));
-      ArrayList<Element> sources = getSources(getPictures(getArticles(doc)));
-      ArrayList<Pair<String, String>> URLs = getURLsPairTitle(sources);
-      // printElements(getSources(pictures));
-      // printURLs(getURLs(sources));
-      ArrayList<Picture> pictures2 = new ArrayList<>();
-      for (Pair pair : URLs) {
-        pictures2.add(new Picture((String) pair.a, (String) pair.b));
-      }
-      return pictures2;
+      ArrayList<Picture> pictures = new ArrayList<>();
+      Document doc = Jsoup.parse(fetchSite(link));
+      pictures = getPictures(doc);
+      return pictures;
     } catch (IOException e) {
       e.printStackTrace();
     }
     return null;
   }
 
+  private static ArrayList<Picture> getPictures(Document document) {
+    ArrayList<Picture> pictures = new ArrayList<>();
+    ArrayList<Element> articles = getArticles(document); // all id s
+    for (Element article : articles) {
+      String dataID = article.attr("data-id");
+      ArrayList<String> tagNames = new ArrayList<String>(
+          Arrays.stream(article.attr("data-tags").split("\\s+")).collect(Collectors.toList()));
+      String uploaderID = article.attr("data-uploader-id");
+      String rating = article.attr("data-rating");
+      String score = article.attr("data-score");
+
+      String urlStr = null;
+      urlStr = article.getElementsByTag("img").attr("src").replace("180x180", "original");
+      try {
+        HttpURLConnection urlc2 = (HttpURLConnection) (new URL(urlStr)).openConnection();
+        if (urlc2.getResponseCode() == 404) {
+          urlStr = getTrueURL(fetchSite(Constants.FILE_PAGE + dataID));
+          pictures.add(new Picture(dataID, uploaderID, urlStr,
+              dataID + "." + uploaderID,
+              tagNames, rating, score));
+        }
+        //System.out.println(urlStr);
+      } catch (MalformedURLException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    return pictures;
+  }
+
+  private static String getTrueURL(String articleHTML) {
+    String url = null;
+    Document doc = Jsoup.parse(articleHTML);
+    Element el = doc.body().getElementById("post-info-size");
+    if (el != null) {
+      Element el2 = el.getElementsByTag("a").first();
+      if (el2 != null)
+        url = el2.attr("href");
+    }
+    return url;
+  }
+
   private static ArrayList<Element> getArticles(Document document) {
     return new ArrayList<Element>(
         document.body().getElementsByTag("article").stream().collect(Collectors.toList()));
-  }
-
-  private static ArrayList<Element> getPictures(ArrayList<Element> articleList) {
-    ArrayList<Element> pictureList = new ArrayList<>();
-    for (Element article : articleList)
-      for (Element picture : article.getElementsByTag("picture"))
-        pictureList.add(picture);
-    return pictureList;
-  }
-
-  private static ArrayList<Element> getSources(ArrayList<Element> pictureList) {
-    ArrayList<Element> sources = new ArrayList<>();
-    for (Element picture : pictureList)
-      sources.add(picture.getElementsByTag("img").first());
-    return sources;
-  }
-
-  private static ArrayList<Pair<String, String>> getURLsPairTitle(ArrayList<Element> sources) {
-    ArrayList<Pair<String, String>> urls = new ArrayList<>();
-    for (Element source : sources) {
-      String url = source.attr("src").replaceAll("180x180", "original");
-      String title = source.attr("title");
-      urls.add(new Pair<String, String>(url, title));
-    }
-    return urls;
-  }
-
-  private static void printElements(ArrayList<Element> elements) {
-    for (Element el : elements)
-      System.out.println(el.toString());
-  }
-
-  private static void printURLs(ArrayList<String> urls) {
-    for (String url : urls)
-      System.out.println(url);
   }
 }

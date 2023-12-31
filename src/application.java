@@ -1,16 +1,6 @@
 import java.util.*;
 import java.io.IOException;
 
-class Pair<A, B> {
-  public final A a;
-  public final B b;
-
-  public Pair(A a, B b) {
-    this.a = a;
-    this.b = b;
-  }
-}
-
 class Application {
 
   public static void main(String[] args) {
@@ -28,14 +18,16 @@ class Application {
       switch (input) {
         case "l" -> {
           try {
-            for (int i = 0; i <= 2; i++)
+            for (int i = 0; i <= 1000; i++) {
+              System.out.println("page :: " + i);
               gallery.fetchPictures(i);
+            }
           } catch (IOException e) {
             e.printStackTrace();
           }
         }
         case "p" -> {
-          System.out.printf(gallery.pairsToString());
+          System.out.printf(gallery.toString());
         }
         case "q" -> {
           System.out.println("[INFO] exiting");

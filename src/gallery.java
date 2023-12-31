@@ -13,7 +13,7 @@ class Gallery extends Fetcher {
   }
 
   public void fetchPictures() throws IOException {
-    for (Picture pic : Fetcher.fetchSite(Constants.INDEX_PAGE))
+    for (Picture pic : Fetcher.fetchPictureListFromSite(Constants.INDEX_PAGE))
       if (!this.contains(pic))
         pictures.add(pic);
   }
@@ -22,7 +22,7 @@ class Gallery extends Fetcher {
     String indexStr = Integer.toString(index);
     String url = Constants.INDEX_PAGE.concat(indexStr);
     try {
-      for (Picture pic : Fetcher.fetchSite(url))
+      for (Picture pic : Fetcher.fetchPictureListFromSite(url))
         if (!this.contains(pic))
           pictures.add(pic);
     } catch (IOException e) {
@@ -37,17 +37,10 @@ class Gallery extends Fetcher {
     return false;
   }
 
-  public String pairsToString() {
+  public String toString() {
     StringBuilder sb = new StringBuilder();
     for (Picture pic : pictures)
-      sb.append(pic.pairToString());
-    return sb.toString();
-  }
-
-  public String urlsToString() {
-    StringBuilder sb = new StringBuilder();
-    for (Picture pic : pictures)
-      sb.append(pic.urlToString());
+      sb.append(pic.toString());
     return sb.toString();
   }
 }
