@@ -1,8 +1,13 @@
 import java.util.*;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URL;;
 
 class Picture {
   private String dataID;
@@ -86,7 +91,44 @@ class Picture {
     sb.append(l);
     return sb.toString();
   }
-  public String getJSON() {
-    
+
+  public JSONObject getJSON() throws JSONException {
+    JSONObject pic = new JSONObject();
+    pic.put("dataID", this.dataID);
+    pic.put("uploaderID", this.uploaderID);
+    pic.put("URL", this.url);
+    pic.put("path", this.path);
+
+    JSONArray tagsArray = new JSONArray();
+    for (Tag tag : this.tags)
+      tagsArray.put(tag.getName());
+
+    pic.put("tags", tagsArray);
+    pic.put("rating", this.rating);
+    pic.put("score", this.score);
+
+    JSONObject head = new JSONObject();
+    head.put("picture", pic);
+
+    return head;
+  }
+
+  public static ArrayList<Picture> readJSON(String name) {
+    // JSON parser object to parse read file
+    JSONParser jsonParser = new JSONParser();
+
+    try (FileReader reader = new FileReader(Constants.NAME_JSON)) {
+      Object obj = jsonParser.parse(reader);
+      JSONArray pictureList = (JSONArray) obj;
+      for (int i = 0; i < pictureList.length(); i++) {
+        
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
   }
 }

@@ -1,5 +1,7 @@
 import java.util.*;
+import org.json.JSONException;
 import java.io.IOException;
+import java.io.FileWriter;
 
 class Application {
 
@@ -18,7 +20,7 @@ class Application {
       switch (input) {
         case "l" -> {
           try {
-            for (int i = 0; i <= 1000; i++) {
+            for (int i = 0; i <= 0; i++) {
               System.out.println("page :: " + i);
               gallery.fetchPictures(i);
             }
@@ -27,7 +29,24 @@ class Application {
           }
         }
         case "p" -> {
-          System.out.printf(gallery.toString());
+          // System.out.printf(gallery.toString());
+          try {
+            System.out.println(gallery.getJSON().toString(Constants.INDENT_JSON));
+          } catch (JSONException e) {
+            e.printStackTrace();
+          }
+        }
+        case "o" -> {
+          try (FileWriter file = new FileWriter(Constants.NAME_JSON, true)) {
+            // We can write any JSONArray or JSONObject instance to the file
+            file.write(gallery.getJSON().toString(Constants.INDENT_JSON));
+            file.flush();
+          } catch (JSONException e) {
+            e.printStackTrace();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
         }
         case "q" -> {
           System.out.println("[INFO] exiting");
@@ -48,10 +67,12 @@ class Application {
 
   class Terminal {
     private static void printHelp() {
-      System.out.printf(" Do : l -> Load new pictures" + System.lineSeparator());
-      System.out.printf(" Do : p -> List loaded pictures" + System.lineSeparator());
-      System.out.printf("    : q -> Quit" + System.lineSeparator());
-      System.out.printf("    : h -> Help" + System.lineSeparator());
+      String l = System.lineSeparator();
+      System.out.printf("   :: l -> Load new pictures" + l);
+      System.out.printf("   :: p -> List loaded pictures" + l);
+      System.out.printf("   :: q -> Quit" + l);
+      System.out.printf("   :: o -> Write currently loaded pictures to index.JSON" + l);
+      System.out.printf("   :: h -> Help" + l);
     }
   }
 }
