@@ -1,7 +1,8 @@
 # `danbooru-viewer`
 A really cool Danbooru viewer written in Java!
 ## Dependencies
-`JSoup`
+`org.jsoup`
+`org.json`
 ## Version
 ```
 $ java --version
