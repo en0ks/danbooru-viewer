@@ -2,7 +2,7 @@ class Constants {
   public final static String INDEX_PAGE = "https://danbooru.donmai.us/posts?page=";
   public final static String FILE_PAGE = "https://danbooru.donmai.us/posts/";
   public final static String DOWNLOAD_ROOT_DIR = "../downloads/";
-  public final static String NAME_JSON = "../index.json";
+  public final static String PICTURES_JSON = "../pictures.json";
   public final static int INDENT_JSON = 8;
 
   public static final String ANSI_RESET = "\u001B[0m";

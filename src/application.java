@@ -6,6 +6,11 @@ import java.io.FileWriter;
 class Application {
 
   public static void main(String[] args) {
+    // try {
+    // System.out.println(new
+    // Gallery(Parser.readJSON(Constants.NAME_JSON)).getJSON().toString(Constants.INDENT_JSON));
+    // } catch (JSONException e) {e.printStackTrace();}
+
     System.out.println("!Danbooru View!");
     Terminal.printHelp();
 
@@ -24,6 +29,7 @@ class Application {
               System.out.println("page :: " + i);
               gallery.fetchPictures(i);
             }
+            writeFile(Constants.PICTURES_JSON, gallery);
           } catch (IOException e) {
             e.printStackTrace();
           }
@@ -35,18 +41,6 @@ class Application {
           } catch (JSONException e) {
             e.printStackTrace();
           }
-        }
-        case "o" -> {
-          try (FileWriter file = new FileWriter(Constants.NAME_JSON, true)) {
-            // We can write any JSONArray or JSONObject instance to the file
-            file.write(gallery.getJSON().toString(Constants.INDENT_JSON));
-            file.flush();
-          } catch (JSONException e) {
-            e.printStackTrace();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-
         }
         case "q" -> {
           System.out.println("[INFO] exiting");
@@ -71,8 +65,20 @@ class Application {
       System.out.printf("   :: l -> Load new pictures" + l);
       System.out.printf("   :: p -> List loaded pictures" + l);
       System.out.printf("   :: q -> Quit" + l);
-      System.out.printf("   :: o -> Write currently loaded pictures to index.JSON" + l);
       System.out.printf("   :: h -> Help" + l);
+    }
+  }
+
+  public static void writeFile(String outfilename, Object obj) {
+    if (obj.getClass() == Gallery.class) {
+      try (FileWriter file = new FileWriter(outfilename, true)) {
+        file.write(((Gallery) obj).getJSON().toString(Constants.INDENT_JSON).concat(System.lineSeparator()));
+        file.flush();
+      } catch (JSONException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 }
